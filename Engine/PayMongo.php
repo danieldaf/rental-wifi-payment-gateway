@@ -10,41 +10,63 @@ class PayMongo
      * @var Client
      */
     private $client;
+    /**
+     * @var User
+     */
+    private $user;
+    /**
+     * @var mixed|null
+     */
+    private $loggedInUser;
 
     public function __construct(){
         $this->client = new GuzzleHttp\Client();
+        $this->user = new User();
+        $this->loggedInUser = Session::getSession('user_id');
     }
 
     /**
+
      * @throws GuzzleException
      */
-    public function makeCheckout()
+    public function makeCheckout($price_amount, $quantity, $voucher_name)
     {
 
+        $reference_number = 'REF' . time();
+
+        $data = [
+            'data' => [
+                'attributes' => [
+                    'billing' => [
+                        'name' => 'Cyanne Justin Vega',
+                        'email' => 'cyannejustinvega@pm.me',
+                        'phone' => '09568104939'
+                    ],
+                    'line_items' => [
+                        [
+                            'currency' => 'PHP',
+                            'amount' => $price_amount,
+                            'name' => $voucher_name,
+                            'quantity' => $quantity
+                        ]
+                    ],
+                    'payment_method_types' => [
+                        'gcash', 'card', 'paymaya'
+                    ],
+                    'send_email_receipt' => true,
+                    'show_description' => false,
+                    'show_line_items' => true,
+                    'reference_number' => $reference_number,
+                    'success_url' => 'http://localhost/payment-gateway/success.php'
+                ]
+            ]
+        ];
+
+        $json_body = json_encode($data);
+
+
         $response = $this->client->request('POST', 'https://api.paymongo.com/v1/checkout_sessions', [
-            'body' => '{"data":{
-            "attributes":{
-                "billing":{
-                "name":"Cyanne Justin Vega",
-                "email":"cyannejustinvega@pm.me",
-                "phone":"09568104939"
-                },
-                    "line_items":[{
-                    "currency":"PHP",
-                    "amount":10000,
-                    "name":"Rental Wifi Voucher",
-                    "quantity":1
-                    }],
-                    "payment_method_types":
-                        ["gcash","card","paymaya"],
-                            "send_email_receipt":true,
-                            "show_description":false,
-                            "show_line_items":true,
-                            "reference_number":"TEST123",
-                            "success_url":"http://localhost/payment-gateway/success.php"
-                        }
-                    }
-                }',
+            'body' => $json_body,
             'headers' => [
                 'Content-Type' => 'application/json',
                 'accept' => 'application/json',
@@ -52,9 +74,9 @@ class PayMongo
             ],
         ]);
 
-        $json = $response->getBody();
+        $json_response = $response->getBody();
 
-        $data = json_decode($json, true);
+        $data = json_decode($json_response, true);
 
         $checkoutId = $data['data']['id'];
         $checkoutType = $data['data']['type'];

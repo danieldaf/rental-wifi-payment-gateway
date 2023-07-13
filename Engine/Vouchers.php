@@ -32,38 +32,15 @@ class Vouchers
         }
     }
 
+
     /**
-     * Make a purchase request
-     * @param $pricing
-     * @return void
+     * Fetch voucher from the database
+     * @param $category
+     * @return false|mixed
      */
-    public function makePurchase($pricing){
+    public function fetchVoucher($category) {
 
-        switch ($pricing) {
-            case 'starter':
-               $pricing = $this->fetchVoucherCategory(1);
-
-                break;
-            case 'basic':
-                $pricing = $this->fetchVoucherCategory(2);
-
-                break;
-            default:
-                echo 'Invalid request';
-                break;
-        }
-
-
-    }
-
-
-    private function processPurchase() {
-
-    }
-
-    private function fetchVoucherCategory($category) {
-
-        $sql = "SELECT * FROM `voucher_category` WHERE `category_id` = :id";
+        $sql = "SELECT * FROM `vouchers` LEFT JOIN `voucher_category` ON `voucher_category`.`category` = `vouchers`.`category` WHERE `vouchers`.`status` = 'available' AND `voucher_category`.`category` = :id LIMIT 1";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id', $category);
         if ($stmt->execute()) {
