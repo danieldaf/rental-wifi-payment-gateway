@@ -22,7 +22,7 @@ class Vouchers
      * @return array|false
      */
     public function purchasedVoucher(){
-        $sql = "SELECT * FROM `purchased_voucher` WHERE `user_id` = :uid";
+        $sql = "SELECT * FROM `purchased_voucher` INNER JOIN purchase_history ph on purchased_voucher.purchase_id = ph.purchased_id INNER JOIN vouchers v on purchased_voucher.voucher_id = v.voucher_id INNER JOIN voucher_category vc on v.category = vc.category WHERE `user_id` = :uid";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(":uid", $this->loggedInUser);
         if ($stmt->execute()){

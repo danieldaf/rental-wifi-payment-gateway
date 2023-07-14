@@ -53,8 +53,9 @@ class Authentication
                     if(password_verify($password, $hashed_password)){
 
                         /** Log in the user */
-                        Session::setSession("uid", $row['user_id']);
+                        Session::setSession("user_id", $row['user_id']);
                         Session::setSession("isLoggedIn", true);
+                        Session::setSession("login_fingerprint", $this->generateLoginFingerprint());
 
                         echo "true";
 
@@ -197,7 +198,9 @@ class Authentication
         }
     }
 
-
-
+    private function generateLoginFingerprint()
+    {
+        return sha1(microtime());
+    }
 
 }

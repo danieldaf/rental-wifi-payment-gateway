@@ -55,7 +55,9 @@
                             <tr>
                                 <th scope="col">Reference Number</th>
                                 <th scope="col">Code</th>
+                                <th scope="col">Voucher Information</th>
                                 <th scope="col">Duration</th>
+                                <th scope="col">Status</th>
                                 <th scope="col">Date Purchased</th>
                             </tr>
                             </thead>
@@ -66,10 +68,12 @@
                                 foreach ($purchasedVoucher as $res):
                             ?>
                             <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
+                                <th scope="row"><?= $res['reference_number'] ?></th>
+                                <td><?= $res['code'] ?></td>
+                                <td><?= $res['voucher_description'] ?></td>
+                                <td><?= $res['duration'] ?> hours</td>
+                                <td><?= $res['purchase_status'] ?></td>
+                                <td><?= $res['date_created'] ?></td>
                             </tr>
                             <?php
                                 endforeach;

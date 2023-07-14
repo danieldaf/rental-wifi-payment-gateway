@@ -1,5 +1,7 @@
 <?php
 
+use GuzzleHttp\Exception\GuzzleException;
+
 include_once 'init.php';
 
 if(isset($_POST['action'])){
@@ -15,7 +17,15 @@ if(isset($_POST['action'])){
 
             break;
         case 'purchaseProcess':
-                $voucher = new Vouchers();
+
+            try {
+
+                $purchase = new Purchase();
+                $purchase->makePurchase($_POST['pricing']);
+
+            } catch (GuzzleException $e) {
+                echo "Something went wrong";
+            }
 
             break;
         default:

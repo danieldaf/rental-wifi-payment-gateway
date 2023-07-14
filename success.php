@@ -1,16 +1,31 @@
 <?php
 
-    include_once 'config/init.php';
+use GuzzleHttp\Exception\GuzzleException;
 
-    $voucher = new PayMongo();
-    $checkout_session_id = Session::getSession('checkout_session_id');
+include_once 'config/init.php';
 
-    try {
-        $voucher->retrieveCheckout($checkout_session_id);
-    } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+    $payment = new PayMongo();
+    $purchase = new Purchase();
+
+    if (Session::checkSession('checkout_session_id')){
+
+        $checkout_session_id = Session::getSession('checkout_session_id');
+        try {
+            $checkout_details = $payment->retrieveCheckout($checkout_session_id);
+        } catch (GuzzleException $e) {
+        }
+
+        if ($checkout_details['status'] === "paid"){
+            if ($checkout_details['checkoutId'] == $checkout_session_id){
+
+            }
+        }
+
+
+
     }
 
-    // TODO: if success is returned. fetch the generated voucher put it in to the user account
+
 
 ?>
 <!doctype html>

@@ -147,6 +147,11 @@ $voucher = new Vouchers();
                 pricing: pricing
             },
             success: function (response) {
+
+                var data = JSON.parse(response);
+
+                window.location.href = data.checkout_url;
+
             }
         })
 
