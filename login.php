@@ -43,6 +43,7 @@
                             </div>
 
                             <div class="d-flex align-items-center">
+                                <button id="login_as_guest" type="button" class="btn btn-secondary">Login as Guest</button>
                                 <button type="submit" class="btn btn-primary ms-auto">
                                     Login
                                 </button>
@@ -68,6 +69,24 @@
 <script src="assets/js/sha512.js"></script>
 <script>
     $(document).ready(function() {
+
+        $("#login_as_guest").on("click", function(e) {
+
+            $.ajax({
+                type: "POST",
+                url: "config/Ajax.php",
+                data: {
+                    action: "guestLogin"
+                },
+                success: function (response) {
+                    if(response === "true"){
+                        window.location.href = "index.php";
+                    }
+                }
+            })
+
+
+        });
         $("#loginform").on('submit', function(e) {
             e.preventDefault();
 

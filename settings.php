@@ -7,6 +7,7 @@ $voucher = new Vouchers();
 if (!$auth->isLoggedIn()){
     header('Location: login.php');
 }
+$page = "settings";
 ?>
 <!doctype html>
 <html lang="en">
@@ -28,20 +29,11 @@ if (!$auth->isLoggedIn()){
 <div class="container py-5">
     <div class="row">
         <div class="col-md-3">
-            <ul class="nav nav-pills flex-column">
-                <li class="nav-item">
-                    <a class="nav-link"  href="index.php">My Vouchers</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="buy.php">Buy Voucher</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="settings.php">Account Setting</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="logout.php">Logout</a>
-                </li>
-            </ul>
+            <?php
+
+            include_once __DIR__ . '/views/sidebar.php';
+
+            ?>
         </div>
         <div class="col-md-9">
 

@@ -51,6 +51,32 @@ class Vouchers
 
     }
 
+    public function isPaid($purchased_id, $checkout_session_id)
+    {
+        $sql = "SELECT purchase_status FROM `purchase_history` WHERE `checkout_session_id` = :csi AND purchased_id = :purchased_id LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':csi', $checkout_session_id);
+        $stmt->bindParam(':purchased_id', $purchased_id);
+        if ($stmt->execute()) {
+            if ($stmt->rowCount() > 0) {
+                $res = $stmt->fetch();
+                if ($res['purchase_status'] === 'paid') {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+
+   public function makeSpoiler($text, $hiddenCount = 1, $hiddenCharacter = '*') {
+        $textLength = strlen($text);
+        $visibleText = substr($text, 0, $hiddenCount);
+        $hiddenText = str_repeat($hiddenCharacter, $textLength - $hiddenCount);
+        return $visibleText . $hiddenText;
+    }
+
 
 
 }

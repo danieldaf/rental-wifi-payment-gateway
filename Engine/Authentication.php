@@ -14,17 +14,46 @@ class Authentication
         $this->db = Database::getInstance();
     }
 
-    public function isLoggedIn(){
+    public  function isLoggedIn(){
 
-        if(Session::checkSession("uid")){
-            return true;
+        $loginString = Generate::_generateLoginString();
+        $currentString = Session::getSession("login_fingerprint");
+        if(Session::getSession('user_id') == null ){
+            return false;
         }
         if (Session::checkSession("isLoggedIn")){
             return true;
         }
-        return false;
+        if($currentString != null && $currentString == $loginString){
+            return true;
+        } else  {
+            Session::destroySession();
+            return false;
+        }
+
     }
 
+    public function isGuest(): bool
+    {
+        if (Session::getSession('isGuest')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public function loginAsGuest() {
+
+        /** Log in the user */
+        Session::setSession("user_id", -1);
+        Session::setSession("isLoggedIn", true);
+        Session::setSession("isGuest", true);
+        Session::setSession("login_fingerprint", Generate::_generateLoginString());
+
+        echo "true";
+
+    }
 
     /**
      * User login function
@@ -55,7 +84,9 @@ class Authentication
                         /** Log in the user */
                         Session::setSession("user_id", $row['user_id']);
                         Session::setSession("isLoggedIn", true);
-                        Session::setSession("login_fingerprint", $this->generateLoginFingerprint());
+                        Session::setSession("login_fingerprint", Generate::_generateLoginString());
+                        Session::setSession("isGuest", false);
+
 
                         echo "true";
 
@@ -198,9 +229,5 @@ class Authentication
         }
     }
 
-    private function generateLoginFingerprint()
-    {
-        return sha1(microtime());
-    }
 
 }

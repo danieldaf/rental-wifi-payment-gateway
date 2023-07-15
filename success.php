@@ -18,11 +18,14 @@ include_once 'config/init.php';
         if ($checkout_details['status'] === "paid"){
             if ($checkout_details['checkoutId'] == $checkout_session_id){
 
+                $payment->updateVoucherandPurchase($checkout_details['checkoutId']);
+                Session::unsetSession('checkout_session_id');
             }
+        } else {
+            header("Location: index.php");
         }
-
-
-
+    } else {
+        header("Location: index.php");
     }
 
 

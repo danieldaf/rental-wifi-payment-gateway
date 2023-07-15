@@ -3,7 +3,7 @@
 include_once 'config/init.php';
 
 $voucher = new Vouchers();
-
+$page = "buy";
 ?>
 <!doctype html>
 <html lang="en">
@@ -25,20 +25,11 @@ $voucher = new Vouchers();
 <div class="container py-5">
     <div class="row">
         <div class="col-md-3">
-            <ul class="nav nav-pills flex-column">
-                <li class="nav-item">
-                    <a class="nav-link"  href="index.php">My Vouchers</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="buy.php">Buy Voucher</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="settings.php">Account Setting</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="logout.php">Logout</a>
-                </li>
-            </ul>
+            <?php
+
+            include_once __DIR__ . '/views/sidebar.php';
+
+            ?>
         </div>
         <div class="col-md-9">
 
@@ -135,21 +126,24 @@ $voucher = new Vouchers();
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script>
     $(document).ready(function() {
-        $(document).on('click', '#purchase_button', function (){
+        $(document).on('click', '#purchase_button', function (e){
+
+            e.preventDefault();
 
         let pricing = $(this).data("id");
 
         $.ajax({
             type: "POST",
             url: 'config/Ajax.php',
+            beforeSend: function(){
+                $("#purchase_button").addClass("disabled");
+            },
             data: {
                 action: "purchaseProcess",
                 pricing: pricing
             },
             success: function (response) {
-
                 var data = JSON.parse(response);
-
                 window.location.href = data.checkout_url;
 
             }
