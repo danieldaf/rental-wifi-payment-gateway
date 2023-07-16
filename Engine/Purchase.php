@@ -53,6 +53,10 @@ class Purchase
                 $voucher = $this->voucher->fetchVoucher(3);
                 $this->paymongo->makeCheckout($voucher['price'], 5, "5 Day Plan", $voucher['voucher_id']);
                 break;
+            case 'pro':
+                $voucher = $this->voucher->fetchVoucher(4);
+                $this->paymongo->makeCheckout($voucher['price'], 1, "Pro", $voucher['voucher_id']);
+                break;
             default:
                 echo 'Invalid request';
                 break;

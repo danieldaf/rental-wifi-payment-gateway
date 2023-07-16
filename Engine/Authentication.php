@@ -9,9 +9,11 @@ class Authentication
      * @var Database
      */
     private $db;
+    private CSRF $csrf;
 
     public function __construct(){
         $this->db = Database::getInstance();
+        $this->csrf = new CSRF();
     }
 
     public  function isLoggedIn(){
@@ -21,7 +23,7 @@ class Authentication
         if(Session::getSession('user_id') == null ){
             return false;
         }
-        if (Session::checkSession("isLoggedIn")){
+        if (Session::getSession("isLoggedIn")){
             return true;
         }
         if($currentString != null && $currentString == $loginString){
@@ -61,11 +63,17 @@ class Authentication
      * @param string $password User's password
      * @return void TRUE if okay, FALSE otherwise
      **/
-    public function userLogin(string $username, string $password)
+    public function userLogin(string $username, string $password, string $csrf)
     {
 
         $username = trim($username);
         $password = trim($password);
+
+        if (!$this->csrf->validateToken($csrf)) {
+            echo "Login not valid";
+            return;
+        }
+
         try {
 
             $sql = "SELECT * FROM `users` WHERE `username` = :username";

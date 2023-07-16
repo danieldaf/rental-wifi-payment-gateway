@@ -5,25 +5,10 @@ class Session {
     public static function startSession(){
 
 
-        if ( '' === session_id() )
-        {
-            $secure = true;
-            $httponly = true;
-
-
-
-            $params = session_get_cookie_params();
-            session_set_cookie_params($params['lifetime'],
-                $params['path'], $params['domain'],
-                $secure, $httponly
-            );
-
-            return session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_name("PAYMENTGATEWAYSESSID");
+            session_start();
         }
-        // Helps prevent hijacking by resetting the session ID at every request.
-        // Might cause unnecessary file I/O overhead?
-        // TODO: create config variable to control regenerate ID behavior
-        return session_regenerate_id(true);
     }
 
 
@@ -32,7 +17,7 @@ class Session {
     }
 
     public static function getSession($index){
-        return isset($_SESSION[$index]) ? $_SESSION[$index] : null;
+        return $_SESSION[$index] ?? null;
     }
 
     public static function checkSession($index) {

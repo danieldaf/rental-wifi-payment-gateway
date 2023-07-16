@@ -34,6 +34,7 @@ $page = "home";
             <?php
 
             include_once __DIR__ . '/views/sidebar.php';
+            echo '<pre>' . print_r($_SESSION, TRUE) . '</pre>';
 
             ?>
         </div>
@@ -51,9 +52,10 @@ $page = "home";
                                 <th scope="col">Code</th>
                                 <th scope="col">Price</th>
                                 <th scope="col">Voucher Information</th>
-                                <th scope="col">Duration</th>
+                                <th scope="col">Invoice Date</th>
+                                <th scope="col">Due Date</th>
                                 <th scope="col">Status</th>
-                                <th scope="col">Date Purchased</th>
+
                             </tr>
                             </thead>
                             <tbody>
@@ -76,9 +78,10 @@ $page = "home";
                             <tr>
                                 <th scope="row"><?= $res['reference_number'] ?></th>
                                 <td><?php echo (!$voucher->isPaid($res['purchased_id'], $res['checkout_session_id'])) ? $voucher->makeSpoiler($res['code']) : $res['code']; ?></td>
-                                <td>₱<?=  number_format($res['price'] / 100, 2); ?></td>
+                                <td>₱<?=  number_format($res['price'] * $res['quantity'] / 100, 2); ?></td>
                                 <td><?= $res['voucher_description'] ?></td>
-                                <td><?= $res['duration'] ?> hours</td>
+                                <td><?= date('m/d/Y', strtotime($res['date_created'])); ?></td>
+                                <td><?= date('m/d/Y', strtotime($res['date_created'])); ?></td>
                                 <td>
                                     <?= ($res['purchase_status'] === "pending")
                                         ? '<div class="d-flex"><a href="'. $checkout_url .'"><span class="badge bg-primary">Pay</span></a><a data-id="'. $res['checkout_session_id'] .'" id="cancel_purchase"><span class="badge bg-warning">Cancel</span></a></div>'
@@ -87,7 +90,6 @@ $page = "home";
                                             : '<span class="badge bg-warning text-dark">Cancelled</span>');
                                     ?>
                                 </td>
-                                <td><?= $res['date_created'] ?></td>
                             </tr>
                             <?php
                                 endforeach;

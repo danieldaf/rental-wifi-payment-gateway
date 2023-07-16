@@ -6,7 +6,7 @@
              header('Location: index.php');
         }
 
-
+    $csrf = new CSRF();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,6 +27,7 @@
                     <div class="card-body p-5">
                         <h1 class="fs-4 card-title fw-bold mb-4">Login</h1>
                         <form id="loginform" enctype="multipart/form-data">
+                            <input type="hidden" id="csrf" name="csrf" value="<?php echo $csrf->generateToken(); ?>"  />
                             <div class="mb-3">
                                 <label class="mb-2 text-muted" for="username">Username</label>
                                 <input id="username" type="text" class="form-control" name="email" value=""  autofocus>
@@ -92,7 +93,8 @@
 
             var data = {
                 username: $("#username").val(),
-                password: $("#password").val()
+                password: $("#password").val(),
+                csrf: $("#csrf").val()
             }
 
             data.password = CryptoJS.SHA512(data.password).toString();
@@ -104,7 +106,8 @@
                 data: {
                     action: 'userLogin',
                     username: data.username,
-                    password: data.password
+                    password: data.password,
+                    csrf: data.csrf
                 },
                 success: function(response){
                     if(response === "true"){

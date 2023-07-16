@@ -11,7 +11,7 @@ if(isset($_POST['action'])){
     switch($action){
         case 'userLogin':
             $login = new Authentication();
-            $login->userLogin($_POST['username'], $_POST['password']);
+            $login->userLogin($_POST['username'], $_POST['password'], $_POST['csrf']);
             break;
         case 'guestLogin':
 

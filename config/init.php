@@ -13,4 +13,6 @@ spl_autoload_register(function($class){
 });
 
 $auth = new Authentication();
+
+
 Session::startSession();

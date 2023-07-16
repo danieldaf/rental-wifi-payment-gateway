@@ -37,22 +37,15 @@ class PayMongo
 
         $userdata = $this->user->getUserData();
 
-        if (!Session::getSession('isGuest')){
-            if (!empty($userdata['firstname'])){
-                $full_name = $userdata['firstname'] . ' ' . $userdata['lastname'];
-            } else {
-                $full_name = $userdata['username'];
-            }
+        if (!Session::getSession('isGuest')) {
+            $full_name = !empty($userdata['firstname']) ? $userdata['firstname'] . ' ' . $userdata['lastname'] : $userdata['username'];
             $email = $userdata['email'];
             $emailReceipt = true;
-        }else{
+        } else {
             $full_name = "Guest";
             $email = null;
             $emailReceipt = false;
         }
-
-
-
 
 
         $reference_number = 'REF' . time() . uniqid();
@@ -79,7 +72,7 @@ class PayMongo
                     'show_description' => false,
                     'show_line_items' => true,
                     'reference_number' => $reference_number,
-                    'success_url' => 'http://localhost/payment-gateway/success.php'
+                    'success_url' => SUCCESS_URL
                 ]
             ]
         ];
@@ -90,7 +83,7 @@ class PayMongo
             'headers' => [
                 'Content-Type' => 'application/json',
                 'accept' => 'application/json',
-                'authorization' => 'Basic c2tfdGVzdF93aUNjMVNacEt3TG5KeXhGYkZaWkZtTHQ6',
+                'authorization' => AUTHORIZATION_VALUE,
             ],
         ]);
 
@@ -105,7 +98,7 @@ class PayMongo
             Session::setSession('checkout_session_id', $checkoutId);
 
 
-        $this->processPurchase($referenceNumber, $voucher, $checkoutId);
+        $this->processPurchase($referenceNumber, $voucher, $checkoutId, $quantity);
 
 
         $out = array(
@@ -126,32 +119,31 @@ class PayMongo
     /**
      * @throws GuzzleException
      */
-    public function retrieveCheckout($checkout_session_id) {
+    public function retrieveCheckout($checkout_session_id): array
+    {
 
         $uri = 'https://api.paymongo.com/v1/checkout_sessions/' .urlencode($checkout_session_id);
 
         $response = $this->client->request('GET', $uri, [
             'headers' => [
                 'accept' => 'application/json',
-                'authorization' => 'Basic c2tfdGVzdF93aUNjMVNacEt3TG5KeXhGYkZaWkZtTHQ6',
+                'authorization' => AUTHORIZATION_VALUE,
             ],
         ]);
 
-        $json_response = $response->getBody();
-
-        $data = json_decode($json_response, true);
+        $data = json_decode($response->getBody(), true);
 
         $checkoutId = $data['data']['id'];
         $referenceNumber = $data['data']['attributes']['reference_number'];
         $status = isset($data['data']['attributes']['payments'][0]['attributes']['status']) ? ($data['data']['attributes']['payments'][0]['attributes']['status'] === 'paid' ? 'paid' : 'not_paid') : 'not_paid';
         $checkoutUrl = $data['data']['attributes']['checkout_url'];
 
-        return array (
+        return [
             "checkoutId" => $checkoutId,
             "referenceNumber" => $referenceNumber,
             "checkout_url" => $checkoutUrl,
             "status" => $status
-        );
+        ];
 
 
     }
@@ -163,7 +155,7 @@ class PayMongo
         $response = $this->client->request('POST', 'https://api.paymongo.com/v1/checkout_sessions/'. urlencode($checkout_session_id) .'/expire', [
             'headers' => [
                 'accept' => 'application/json',
-                'authorization' => 'Basic c2tfdGVzdF93aUNjMVNacEt3TG5KeXhGYkZaWkZtTHQ6'
+                'authorization' => AUTHORIZATION_VALUE
             ],
         ]);
 
@@ -175,22 +167,27 @@ class PayMongo
 
     }
 
-    public function processPurchase($reference_number, $voucher_id, $checkout_session_id): bool
+    public function processPurchase($reference_number, $voucher_id, $checkout_session_id, $quantity): bool
     {
 
-        $sql = "INSERT INTO `purchased_voucher` (reference_number, user_id, voucher_id) VALUES (:reference_number, :user_id, :voucher_id)";
+
+        $fingerprint = Session::getSession('login_fingerprint');
+
+        $sql = "INSERT INTO `purchased_voucher` (reference_number, user_id, voucher_id, quantity) VALUES (:reference_number, :user_id, :voucher_id, :quantity)";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':reference_number', $reference_number );
         $stmt->bindParam(':user_id', $this->loggedInUser);
         $stmt->bindParam(':voucher_id', $voucher_id);
+        $stmt->bindParam(':quantity', $quantity);
         if($stmt->execute()) {
 
             $purchased_id = $this->db->lastInsertId();
 
-            $sql = "INSERT INTO `purchase_history` (`checkout_session_id`, `purchased_id`) VALUES (:checkout_session_id, :purchased_id)";
+            $sql = "INSERT INTO `purchase_history` (`checkout_session_id`, `purchased_id`, `fingerprint`) VALUES (:checkout_session_id, :purchased_id, :fp)";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':checkout_session_id', $checkout_session_id);
             $stmt->bindParam(':purchased_id', $purchased_id);
+            $stmt->bindParam(':fp', $fingerprint);
 
             if ($stmt->execute()) {
                 return true;
@@ -202,33 +199,33 @@ class PayMongo
 
     /**
      * Update purchase information and update voucher status
-     * @param $checkout_session_id
-     * @return void
+     * @param string $checkout_session_id
+     * @param bool $cancelled
+     * @return true
      */
-    public function updateVoucherandPurchase($checkout_session_id, $cancelled = false)
+    public function updateVoucherandPurchase(string $checkout_session_id, bool $cancelled = false)
     {
 
         if ($cancelled) {
             $sql = "UPDATE purchase_history
-JOIN purchased_voucher ON purchase_history.purchased_id = purchased_voucher.purchase_id
-JOIN vouchers ON purchased_voucher.voucher_id = vouchers.voucher_id
-SET purchase_history.purchase_status = 'cancelled'
-WHERE purchase_history.checkout_session_id = :csi";
+                        JOIN purchased_voucher ON purchase_history.purchased_id = purchased_voucher.purchase_id
+                        JOIN vouchers ON purchased_voucher.voucher_id = vouchers.voucher_id
+                        SET purchase_history.purchase_status = 'cancelled'
+                        WHERE purchase_history.checkout_session_id = :csi";
         } else {
             $sql = "UPDATE purchase_history
-JOIN purchased_voucher ON purchase_history.purchased_id = purchased_voucher.purchase_id
-JOIN vouchers ON purchased_voucher.voucher_id = vouchers.voucher_id
-SET purchase_history.purchase_status = 'paid',
-    vouchers.status = 'purchased'
-WHERE purchase_history.checkout_session_id = :csi";
+                        JOIN purchased_voucher ON purchase_history.purchased_id = purchased_voucher.purchase_id
+                        JOIN vouchers ON purchased_voucher.voucher_id = vouchers.voucher_id
+                        SET purchase_history.purchase_status = 'paid',
+                            vouchers.status = 'purchased'
+                        WHERE purchase_history.checkout_session_id = :csi";
         }
 
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(":csi", $checkout_session_id);
-        if ($stmt->execute()){
-            return true;
-        }
+        return $stmt->execute();
+
     }
 
 

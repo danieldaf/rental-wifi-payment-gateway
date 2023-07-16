@@ -22,8 +22,19 @@ class Vouchers
      * @return array|false
      */
     public function purchasedVoucher(){
-        $sql = "SELECT * FROM `purchased_voucher` INNER JOIN purchase_history ph on purchased_voucher.purchase_id = ph.purchased_id INNER JOIN vouchers v on purchased_voucher.voucher_id = v.voucher_id INNER JOIN voucher_category vc on v.category = vc.category WHERE `user_id` = :uid";
+
+        $fingerprint = Session::getSession('login_fingerprint');
+
+        if (Session::getSession('isGuest')){
+            $sql = "SELECT * FROM `purchased_voucher` INNER JOIN purchase_history ph on purchased_voucher.purchase_id = ph.purchased_id INNER JOIN vouchers v on purchased_voucher.voucher_id = v.voucher_id INNER JOIN voucher_category vc on v.category = vc.category WHERE `user_id` = :uid AND `fingerprint` = :fp";
+        } else {
+            $sql = "SELECT * FROM `purchased_voucher` INNER JOIN purchase_history ph on purchased_voucher.purchase_id = ph.purchased_id INNER JOIN vouchers v on purchased_voucher.voucher_id = v.voucher_id INNER JOIN voucher_category vc on v.category = vc.category WHERE `user_id` = :uid";
+        }
+
         $stmt = $this->db->prepare($sql);
+        if (Session::getSession('isGuest')){
+            $stmt->bindParam(":fp", $fingerprint);
+        }
         $stmt->bindParam(":uid", $this->loggedInUser);
         if ($stmt->execute()){
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -51,6 +62,13 @@ class Vouchers
 
     }
 
+
+    /**
+     * Check if checkout is paid
+     * @param $purchased_id
+     * @param $checkout_session_id
+     * @return bool|void
+     */
     public function isPaid($purchased_id, $checkout_session_id)
     {
         $sql = "SELECT purchase_status FROM `purchase_history` WHERE `checkout_session_id` = :csi AND purchased_id = :purchased_id LIMIT 1";
@@ -70,7 +88,15 @@ class Vouchers
     }
 
 
-   public function makeSpoiler($text, $hiddenCount = 1, $hiddenCharacter = '*') {
+    /**
+     * Make spoiler to the text
+     * @param $text
+     * @param int $hiddenCount
+     * @param string $hiddenCharacter
+     * @return string
+     */
+   public function makeSpoiler($text, int $hiddenCount = 0, string $hiddenCharacter = '*'): string
+   {
         $textLength = strlen($text);
         $visibleText = substr($text, 0, $hiddenCount);
         $hiddenText = str_repeat($hiddenCharacter, $textLength - $hiddenCount);
