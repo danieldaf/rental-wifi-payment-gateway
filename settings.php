@@ -37,6 +37,52 @@ $page = "settings";
         </div>
         <div class="col-md-9">
 
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="account-tab" data-bs-toggle="tab" data-bs-target="#account-tab-pane" type="button" role="tab" aria-controls="account-tab-pane" aria-selected="true">Account</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-tab-pane" type="button" role="tab" aria-controls="password-tab-pane" aria-selected="false">Password</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="delete-tab" data-bs-toggle="tab" data-bs-target="#delete-tab-pane" type="button" role="tab" aria-controls="delete-tab-pane" aria-selected="false">Delete Account</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="account-tab-pane" role="tabpanel" aria-labelledby="account-tab" tabindex="0">
+                            <div class="container py-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputUsername">Username</label>
+                                            <input type="text" class="form-control-plaintext" id="inputUsername" value="" placeholder="Username" readonly>
+                                            <small id="usernamehelpLine" class="text-muted">
+                                                Username cannot be changed.
+                                            </small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="inputEmail">Email</label>
+                                            <input type="text" class="form-control" id="inputEmail" value="" placeholder="Email">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="password-tab-pane" role="tabpanel" aria-labelledby="password-tab" tabindex="0">
+                            <!-- Add content for the password tab here -->
+                        </div>
+
+                        <div class="tab-pane fade" id="delete-tab-pane" role="tabpanel" aria-labelledby="delete-tab" tabindex="0">
+                            <!-- Add content for the delete account tab here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
 
         </div>

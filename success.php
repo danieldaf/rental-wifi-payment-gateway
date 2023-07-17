@@ -1,7 +1,5 @@
 <?php
 
-use GuzzleHttp\Exception\GuzzleException;
-
 include_once 'config/init.php';
 
     $payment = new PayMongo();
@@ -10,16 +8,16 @@ include_once 'config/init.php';
     if (Session::checkSession('checkout_session_id')){
 
         $checkout_session_id = Session::getSession('checkout_session_id');
-        try {
-            $checkout_details = $payment->retrieveCheckout($checkout_session_id);
-        } catch (GuzzleException $e) {
-        }
+        $checkout_details = $payment->retrieveCheckout($checkout_session_id);
 
         if ($checkout_details['status'] === "paid"){
             if ($checkout_details['checkoutId'] == $checkout_session_id){
 
                 $payment->updateVoucherandPurchase($checkout_details['checkoutId']);
                 Session::unsetSession('checkout_session_id');
+                $payment->removeVoucherFromOtherCart(Session::getSession('vid'));
+
+
             }
         } else {
             header("Location: index.php");

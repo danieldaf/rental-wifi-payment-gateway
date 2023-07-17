@@ -49,17 +49,21 @@ class Vouchers
      * @param $category
      * @return false|mixed
      */
-    public function fetchVoucher($category) {
-
-        $sql = "SELECT * FROM `vouchers` LEFT JOIN `voucher_category` ON `voucher_category`.`category` = `vouchers`.`category` WHERE `vouchers`.`status` = 'available' AND `voucher_category`.`category` = :id LIMIT 1";
+    public function fetchVoucher($category, $limit = 1)
+    {
+        $sql = "SELECT * FROM `vouchers`
+            LEFT JOIN `voucher_category` ON `voucher_category`.`category` = `vouchers`.`category`
+            WHERE `vouchers`.`status` = 'available' AND `voucher_category`.`category` = :id
+            LIMIT :limit";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id', $category);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+
         if ($stmt->execute()) {
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
             return false;
         }
-
     }
 
 
