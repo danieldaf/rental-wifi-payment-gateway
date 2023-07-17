@@ -11,18 +11,27 @@ if (!$auth->isAdmin()){
     header("Location: index.php");
 }
 
-$page = "home";
+$page = "vouchers";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $code = $_POST['code'];
+    $codes = $_POST['code'];
     $category = $_POST['code_category'];
+
+    $filteredCodes = array_filter($codes); // Remove empty values from the array
+    if (!empty($filteredCodes)) {
+        $code = implode(", ", $filteredCodes);
+    }
+
 
     $stmt = $db->prepare("INSERT INTO vouchers (code, category) VALUES (?, ?)");
     $stmt->execute([$code, $category]);
 
     header("Location: vouchers.php?success=true");
     exit();
-} ?>
+}
+
+
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -103,8 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <td>
 
                                     <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline-primary"><i class="far fa-pencil"></i></button>
-                                        <button class="btn btn-sm btn-outline-danger"><i class="far fa-trash"></i></button>
+                                        <button class="btn btn-sm btn-outline-primary edit_code" data-id="<?= $res['voucher_id'] ?>"><i class="far fa-pencil"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger delete_code" data-id="<?= $res['voucher_id'] ?>"><i class="far fa-trash"></i></button>
                                     </div>
 
                                 </td>
@@ -136,14 +145,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <form action="vouchers.php" method="post">
 
-                    <div class="mb-3">
-                        <label for="code">Enter Code</label>
-                        <input type="number" name="code" id="code" class="form-control" placeholder="Enter Voucher Code" autofocus>
-                    </div>
 
                     <div class="mb-3">
                         <label for="code_category">Code Category</label>
-                        <select id="code_category" name="code_category" class="form-control">
+                        <select id="code_category" name="code_category" class="form-control" onchange="toggleCodeInputs()">
                             <option selected disabled>Select Code Category</option>
                             <?php
                             $voucher_cat = new Admin();
@@ -151,13 +156,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $category = $voucher_cat->fetchAllCategory();
 
                             foreach ($category as $cat):
-                            ?>
-                            <option value="<?= $cat['category'] ?>"><?= $cat['voucher_description'] ?></option>
+                                ?>
+                                <option value="<?= $cat['category'] ?>"><?= $cat['voucher_description'] ?></option>
                             <?php
                             endforeach;
                             ?>
                         </select>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="code">Enter Code</label>
+                        <div id="codeInputs">
+                            <input type="number" name="code[]" id="code" class="form-control" placeholder="Enter Voucher Code" autofocus>
+                        </div>
+                    </div>
+
+
 
                     <div class="mb-3">
                         <button type="submit" name="saveCode" class="btn btn-success">Save</button>
@@ -178,6 +192,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script>
     const dataTable = new simpleDatatables.DataTable("#myTable");
+
+    // Fetch the journal data
+    $(document).on('click', '.edit', function (){
+
+        let journal_id = $(this).data('id');
+        let editModal = new bootstrap.Modal('#edit_modal')
+        $.ajax({
+            type: 'POST',
+            url: 'config/Ajax.php',
+            data: {
+                action: 'fetchJournalByIDCrud',
+                journal_id: journal_id
+            },
+            success: function (res) {
+
+                var data = JSON.parse(res)
+
+                editModal.show();
+
+            }
+        })
+
+    });
+
+
+
+        function toggleCodeInputs() {
+        const codeCategory = document.getElementById('code_category');
+        const codeInputs = document.getElementById('codeInputs');
+
+        if (codeCategory.value === '3') {
+            codeInputs.innerHTML = `
+                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 1">
+                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 2">
+                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 3">
+                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 4">
+                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 5">
+            `;
+    } else {
+        codeInputs.innerHTML = `
+                <input type="number" name="code[]" id="code" class="form-control" placeholder="Enter Voucher Code" autofocus>
+            `;
+    }
+    }
+
+    $(document).on('click', '.delete', function () {
+
+        let journal_id = $(this).data('id');
+        let name = $(this).data('name');
+
+        var prompt = 'Are you sure you want to delete ' + name
+
+        alertify.confirm('Are you sure?', prompt,
+            function(){
+                $.ajax({
+                    type: 'POST',
+                    url: 'config/Ajax.php',
+                    data: {
+                        action: 'deleteJournal',
+                        journal_id: journal_id
+                    }, success: function (res){
+                        if (res === "true"){
+                            notyf.success('Your changes have been successfully saved!');
+                            initJournalTable();
+                        } else {
+                            notyf.error(res)
+                        }
+                    }
+                })
+            }, function(){ alertify.error('Cancel')});
+    });
 </script>
 </body>
 </html>

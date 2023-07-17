@@ -77,10 +77,7 @@ class Authentication
         $username = trim($username);
         $password = trim($password);
 
-        if (!$this->csrf->validateToken($csrf)) {
-            echo "Login not valid";
-            return;
-        }
+
 
         try {
 
@@ -94,6 +91,12 @@ class Authentication
                     $row = $stmt->fetch(PDO::FETCH_ASSOC);
                     /** @var string $hashed_password **/
                     $hashed_password = $row['password'];
+
+
+                    if (!$this->csrf->validateToken($csrf)) {
+                        echo "Login not valid";
+                        return;
+                    }
 
                     if(password_verify($password, $hashed_password)){
 
