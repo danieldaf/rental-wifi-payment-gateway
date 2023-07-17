@@ -50,12 +50,8 @@ class Purchase
                 $this->paymongo->makeCheckout($voucher['price'], 1, "Basic", $voucher['voucher_id']);
                 break;
             case '5dayplan':
-                $voucher = $this->voucher->fetchVoucher(3,5);
-                foreach ($voucher as $v){
-
-                }
-
-                $this->paymongo->makeCheckout($voucher['price'], 5, "5 Day Plan", $voucher['voucher_id']);
+                $voucher = $this->voucher->fetchVoucher(3);
+                 $this->paymongo->makeCheckout($voucher['price'], 5, "5 Day Plan", $voucher['voucher_id']);
 
                 break;
             case 'pro':

@@ -49,18 +49,17 @@ class Vouchers
      * @param $category
      * @return false|mixed
      */
-    public function fetchVoucher($category, $limit = 1)
+    public function fetchVoucher($category)
     {
         $sql = "SELECT * FROM `vouchers`
             LEFT JOIN `voucher_category` ON `voucher_category`.`category` = `vouchers`.`category`
             WHERE `vouchers`.`status` = 'available' AND `voucher_category`.`category` = :id
-            LIMIT :limit";
+            LIMIT 1";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id', $category);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         } else {
             return false;
         }
@@ -94,17 +93,10 @@ class Vouchers
 
     /**
      * Make spoiler to the text
-     * @param $text
-     * @param int $hiddenCount
-     * @param string $hiddenCharacter
-     * @return string
      */
-   public function makeSpoiler($text, int $hiddenCount = 0, string $hiddenCharacter = '*'): string
+   public function makeSpoiler(): string
    {
-        $textLength = strlen($text);
-        $visibleText = substr($text, 0, $hiddenCount);
-        $hiddenText = str_repeat($hiddenCharacter, $textLength - $hiddenCount);
-        return $visibleText . $hiddenText;
+        return "********";
     }
 
 

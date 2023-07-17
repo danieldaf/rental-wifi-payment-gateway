@@ -12,3 +12,11 @@ include_once 'config/init.php';
 //echo "<br>";
 //echo "Is Valid: " . $csrf->validateToken($token);
 
+
+$string = "value1, value2, value3"; // Example string
+if (strpos($string, ',') !== false) {
+    $result = implode("<br>", explode(', ', $string));
+} else {
+    $result = $string;
+}
+echo  $result;

@@ -4,7 +4,6 @@
 class Authentication
 {
 
-
     /**
      * @var Database
      */
@@ -42,6 +41,15 @@ class Authentication
         } else {
             return false;
         }
+    }
+
+    public function isAdmin()
+    {
+      if ($this->isLoggedIn()){
+          if (Session::getSession('isAdmin')){
+              return true;
+          }
+      }
     }
 
 
@@ -88,6 +96,10 @@ class Authentication
                     $hashed_password = $row['password'];
 
                     if(password_verify($password, $hashed_password)){
+
+                        if ($row['role'] === "admin"){
+                            Session::setSession('isAdmin', true);
+                        }
 
                         /** Log in the user */
                         Session::setSession("user_id", $row['user_id']);

@@ -3,10 +3,14 @@
     include_once 'config/init.php';
     $voucher = new Vouchers();
 
-
     if (!$auth->isLoggedIn()){
         header('Location: login.php');
     }
+
+    if ($auth->isAdmin()){
+        header("Location: vouchers.php");
+    }
+
 $page = "home";
 ?>
 <!doctype html>
@@ -14,7 +18,7 @@ $page = "home";
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>My Vouchers | <?= APP_NAME ?></title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
@@ -57,45 +61,55 @@ $page = "home";
                             </thead>
                             <tbody>
                             <?php
-                                $purchasedVoucher = $voucher->purchasedVoucher();
-                                if (!empty($purchasedVoucher)):
-                                foreach ($purchasedVoucher as $res):
+                            $purchasedVoucher = $voucher->purchasedVoucher();
 
-                                    $paymongo = new Paymongo();
+                            if (!empty($purchasedVoucher)) {
+                                foreach ($purchasedVoucher as $res) {
+                                    $paymongo = new PayMongo();
                                     $paymong_data = $paymongo->retrieveCheckout($res['checkout_session_id']);
 
-                                    if($res['purchase_status'] === 'pending'){
-                                        if ($paymong_data['status'] === 'not_paid') {
-                                            $checkout_url =  $paymong_data['checkout_url'];
-                                        }
+                                    $checkout_url = '';
+                                    if ($res['purchase_status'] === 'pending' && $paymong_data['status'] === 'not_paid') {
+                                        $checkout_url = $paymong_data['checkout_url'];
                                     }
 
+                                    $code = str_contains($res['code'], ',') ? implode("<br>", explode(', ', $res['code'])) : $res['code'];
+                                    $isPaid = $voucher->isPaid($res['purchased_id'], $res['checkout_session_id']);
+                                    $price = number_format($res['price'] * $res['quantity'] / 100, 2);
+                                    $purchaseDate = date('m/d/Y', strtotime($res['created_at']));
+                                    $status = '';
 
-                            ?>
-                            <tr>
-                                <th scope="row"><?= $res['reference_number'] ?></th>
-                                <td><?php echo (!$voucher->isPaid($res['purchased_id'], $res['checkout_session_id'])) ? $voucher->makeSpoiler($res['code']) : $res['code']; ?></td>
-                                <td>₱<?=  number_format($res['price'] * $res['quantity'] / 100, 2); ?></td>
-                                <td><?= $res['voucher_description'] ?></td>
-                                <td><?= date('m/d/Y', strtotime($res['created_at'])); ?></td>
-                                <td><?= date('m/d/Y', strtotime($res['created_at'])); ?></td>
-                                <td>
-                                    <?= ($res['purchase_status'] === "pending" && $res['status'] !== "purchased")
-                                        ? '<div class="d-flex"><a href="'. $checkout_url .'"><span class="badge bg-primary">Pay</span></a><a data-id="'. $res['checkout_session_id'] .'" id="cancel_purchase"><span class="badge bg-warning">Cancel</span></a></div>'
-                                        : (($res['purchase_status'] === "paid" && $res['status'] === "purchased")
-                                            ? '<span class="badge bg-success">Paid</span>'
-                                            : '<span class="badge bg-warning text-dark">Cancelled</span>');
+                                    if ($res['purchase_status'] === 'pending' && $res['status'] !== 'purchased') {
+                                        $status = '<div class="d-flex"><a href="'. $checkout_url .'"><span class="badge bg-primary">Pay</span></a><a data-id="'. $res['checkout_session_id'] .'" id="cancel_purchase"><span class="badge bg-warning">Cancel</span></a></div>';
+                                    } elseif ($res['purchase_status'] === 'paid' && $res['status'] === 'purchased') {
+                                        $status = '<span class="badge bg-success">Paid</span>';
+                                    } else {
+                                        $status = '<span class="badge bg-warning text-dark">Cancelled</span>';
+                                    }
                                     ?>
-                                </td>
-                            </tr>
-                            <?php
-                                endforeach;
-                                else:
+
+                                    <tr>
+                                        <th scope="row"><?= $res['reference_number'] ?></th>
+                                        <td><?= !$isPaid ? $voucher->makeSpoiler() : $code ?></td>
+                                        <td>₱<?= $price ?></td>
+                                        <td><?= $res['voucher_description'] ?></td>
+                                        <td><?= $purchaseDate ?></td>
+                                        <td><?= $purchaseDate ?></td>
+                                        <td><?= $status ?></td>
+                                    </tr>
+
+                                    <?php
+                                }
+                            } else {
+                                ?>
+
+                                <tr>
+                                    <td colspan="7">You have not purchased any vouchers yet.</td>
+                                </tr>
+
+                                <?php
+                            }
                             ?>
-                            <tr>
-                              <td colspan="7">You have not purchased any vouchers yet.</td>
-                            </tr>
-                            <?php endif; ?>
                             </tbody>
                         </table>
                     </div>

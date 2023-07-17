@@ -40,7 +40,7 @@ class PayMongo
             $emailReceipt = true;
         }
 
-        $reference_number = 'REF' . time() . uniqid();
+        $reference_number = 'REF' . time();
 
         $payload = $this->createCheckoutPayload($full_name, $email, $price_amount, $quantity, $voucher_name, $emailReceipt, $reference_number);
 
@@ -261,7 +261,7 @@ class PayMongo
     
             DELETE FROM purchased_voucher 
             WHERE voucher_id = :voucher_id 
-            AND user_id = :uid
+            AND NOT user_id = :uid
         ";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(":voucher_id", $voucher_id);

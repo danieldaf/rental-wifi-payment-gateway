@@ -22,19 +22,11 @@ if(isset($_POST['action'])){
 
             break;
         case 'purchaseProcess':
-
-            try {
-
-                $purchase = new Purchase();
-                $purchase->makePurchase($_POST['pricing']);
-
-            } catch (GuzzleException $e) {
-                echo "Something went wrong";
-            }
-
+            $purchase = new Purchase();
+            $purchase->makePurchase($_POST['pricing']);
             break;
         case 'expireCheckout':
-            $paymongo = new Paymongo();
+            $paymongo = new PayMongo();
             try {
                 $paymongo->expireCheckout($_POST['checkout_session_id']);
             } catch (GuzzleException $e) {
