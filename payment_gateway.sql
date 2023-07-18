@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1deb5ubuntu1
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Jul 18, 2023 at 12:20 AM
--- Server version: 8.0.33-0ubuntu0.22.04.2
--- PHP Version: 8.1.2-1ubuntu2.13
+-- Host: localhost
+-- Generation Time: Jul 18, 2023 at 03:02 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,12 +28,12 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `purchased_voucher` (
-  `purchase_id` int NOT NULL,
-  `reference_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `user_id` int NOT NULL,
-  `voucher_id` int NOT NULL,
-  `quantity` int DEFAULT NULL,
-  `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `purchase_id` int(11) NOT NULL,
+  `reference_number` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `voucher_id` int(11) NOT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `date_created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -41,14 +41,7 @@ CREATE TABLE `purchased_voucher` (
 --
 
 INSERT INTO `purchased_voucher` (`purchase_id`, `reference_number`, `user_id`, `voucher_id`, `quantity`, `date_created`) VALUES
-(5, 'REF168959244564b5227df23bc', 1, 11, 1, '2023-07-17 19:14:11'),
-(6, 'REF168959254264b522de30f8b', 1, 101, 1, '2023-07-17 19:15:42'),
-(7, 'REF1689592924', 1, 12, 1, '2023-07-17 19:22:05'),
-(8, 'REF1689601210', 1, 12, 1, '2023-07-17 21:40:11'),
-(9, 'REF1689603700', 1, 801, 5, '2023-07-17 22:21:41'),
-(10, 'REF1689604436', 1, 701, 1, '2023-07-17 22:33:56'),
-(11, 'REF1689604487', -1, 802, 5, '2023-07-17 22:34:48'),
-(12, 'REF1689609155', 1, 701, 1, '2023-07-17 23:52:35');
+(1, 'REF1689642082', 2, 13, 1, '2023-07-18 09:01:23');
 
 -- --------------------------------------------------------
 
@@ -57,12 +50,12 @@ INSERT INTO `purchased_voucher` (`purchase_id`, `reference_number`, `user_id`, `
 --
 
 CREATE TABLE `purchase_history` (
-  `purchase_history_id` int NOT NULL,
-  `checkout_session_id` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `purchased_id` int NOT NULL,
-  `purchase_status` enum('pending','paid','cancelled') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'pending',
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `fingerprint` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `purchase_history_id` int(11) NOT NULL,
+  `checkout_session_id` varchar(255) NOT NULL,
+  `purchased_id` int(11) NOT NULL,
+  `purchase_status` enum('pending','paid','cancelled') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `fingerprint` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -70,14 +63,7 @@ CREATE TABLE `purchase_history` (
 --
 
 INSERT INTO `purchase_history` (`purchase_history_id`, `checkout_session_id`, `purchased_id`, `purchase_status`, `created_at`, `fingerprint`) VALUES
-(5, 'cs_5M9u22WvaAegZ6VEP7vL7kjf', 5, 'paid', '2023-07-17 11:15:31', '59f092f8d49473ba1ba9ee66e7da18bcf4f781189972ee8e5f72ba1634f4861eef8fe36d10687d05d42a673c15d6b645ed8373bfeada9a253dbef4beac115a90'),
-(6, 'cs_6qjRtwc7DH75GG9keppRaV3w', 6, 'cancelled', '2023-07-17 11:17:34', '59f092f8d49473ba1ba9ee66e7da18bcf4f781189972ee8e5f72ba1634f4861eef8fe36d10687d05d42a673c15d6b645ed8373bfeada9a253dbef4beac115a90'),
-(7, 'cs_aaPGy79dHSE1SaVmjMsHGy1u', 7, 'pending', '2023-07-17 11:22:05', '59f092f8d49473ba1ba9ee66e7da18bcf4f781189972ee8e5f72ba1634f4861eef8fe36d10687d05d42a673c15d6b645ed8373bfeada9a253dbef4beac115a90'),
-(8, 'cs_R16qzF2JYfHwwMH43GuFxnyy', 8, 'paid', '2023-07-17 13:40:37', '59f092f8d49473ba1ba9ee66e7da18bcf4f781189972ee8e5f72ba1634f4861eef8fe36d10687d05d42a673c15d6b645ed8373bfeada9a253dbef4beac115a90'),
-(9, 'cs_GuPzqBWPeRR4mNYB7DGn5xbB', 9, 'paid', '2023-07-17 14:22:31', '59f092f8d49473ba1ba9ee66e7da18bcf4f781189972ee8e5f72ba1634f4861eef8fe36d10687d05d42a673c15d6b645ed8373bfeada9a253dbef4beac115a90'),
-(10, 'cs_z3tTNSggVB6WaJAJXW8si4Ty', 10, 'pending', '2023-07-17 14:33:56', '59f092f8d49473ba1ba9ee66e7da18bcf4f781189972ee8e5f72ba1634f4861eef8fe36d10687d05d42a673c15d6b645ed8373bfeada9a253dbef4beac115a90'),
-(11, 'cs_nGD43V34dyNsjv8aNGy8Zx3K', 11, 'paid', '2023-07-17 14:35:42', '59f092f8d49473ba1ba9ee66e7da18bcf4f781189972ee8e5f72ba1634f4861eef8fe36d10687d05d42a673c15d6b645ed8373bfeada9a253dbef4beac115a90'),
-(12, 'cs_a36FLKYVrLCxyTQbez1mc7LH', 12, 'pending', '2023-07-17 15:52:35', '59f092f8d49473ba1ba9ee66e7da18bcf4f781189972ee8e5f72ba1634f4861eef8fe36d10687d05d42a673c15d6b645ed8373bfeada9a253dbef4beac115a90');
+(1, 'cs_E1Bucrkyjav9vc8jWDTiT5kD', 1, 'pending', '2023-07-18 01:01:23', 'be3565d14cd377b2e6eaa0f920c5fe2dced879deec839cf7615ac6fbd936008b119c762744a718a4b5ec3b4dab4ed5292830273020754ae9d6abb5089cdfa8fc');
 
 -- --------------------------------------------------------
 
@@ -86,12 +72,12 @@ INSERT INTO `purchase_history` (`purchase_history_id`, `checkout_session_id`, `p
 --
 
 CREATE TABLE `users` (
-  `user_id` int NOT NULL,
-  `username` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `role` enum('user','admin') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'user',
-  `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `user_id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('user','admin') NOT NULL DEFAULT 'user',
+  `date_created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -100,8 +86,11 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `role`, `date_created`) VALUES
 (-1, 'guest', '', '', 'user', '2023-07-16 08:08:05'),
-(1, 'cyanneheart', 'cyannejustinl.vega12@gmail.com', '$2y$10$8g6Zl08/tW8xCWsi57zKauz5EdoU/HmjZKSPGfwKQgezZY6MA60oa', 'user', '2023-07-12 15:48:53'),
-(3, 'admin', 'admin@admin.com', '$2y$10$faLpAGqlelECVJ9gt9dVb.G6QTuNCl9nrngCAQz3j0HBowM31j/p6', 'admin', '2023-07-17 20:11:29');
+(1, 'bitresss', 'bitresss@gmail.com', '$2y$10$bBmcYpeOGH97zrigRkU7s.UmvwCcnQcpZhRTpJflDcqEbJl1JntLe', 'user', '2023-07-18 08:57:33'),
+(2, 'cyanneheart', 'cyannejustinl.vega12@gmail.com', '$2y$10$8g6Zl08/tW8xCWsi57zKauz5EdoU/HmjZKSPGfwKQgezZY6MA60oa', 'user', '2023-07-12 15:48:53'),
+(3, 'admin', 'admin@admin.com', '$2y$10$faLpAGqlelECVJ9gt9dVb.G6QTuNCl9nrngCAQz3j0HBowM31j/p6', 'admin', '2023-07-17 20:11:29'),
+(4, 'bitress', 'itscyanne@gmail.com', '$2y$10$faLpAGqlelECVJ9gt9dVb.G6QTuNCl9nrngCAQz3j0HBowM31j/p6', 'user', '2023-07-18 08:48:07'),
+(5, 'bitressss', 'bitressss@gmail.com', '$2y$10$5Rt9mZfDm9YP0NWNbGseve8IQU98ktTucpMyEddgqdpqhL3zBT9cu', 'user', '2023-07-18 09:00:22');
 
 -- --------------------------------------------------------
 
@@ -110,10 +99,10 @@ INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `role`, `date_c
 --
 
 CREATE TABLE `user_details` (
-  `id` int NOT NULL,
-  `user_id` int NOT NULL,
-  `first_name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `last_name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -121,9 +110,12 @@ CREATE TABLE `user_details` (
 --
 
 INSERT INTO `user_details` (`id`, `user_id`, `first_name`, `last_name`) VALUES
-(0, 1, NULL, NULL),
 (1, -1, NULL, NULL),
-(3, 3, NULL, NULL);
+(2, 1, NULL, NULL),
+(3, 2, NULL, NULL),
+(4, 3, NULL, NULL),
+(5, 4, NULL, NULL),
+(6, 5, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -132,10 +124,10 @@ INSERT INTO `user_details` (`id`, `user_id`, `first_name`, `last_name`) VALUES
 --
 
 CREATE TABLE `vouchers` (
-  `voucher_id` int NOT NULL,
-  `code` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `category` int NOT NULL,
-  `status` enum('purchased','available') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'available'
+  `voucher_id` int(11) NOT NULL,
+  `code` varchar(100) NOT NULL,
+  `category` int(11) NOT NULL,
+  `status` enum('purchased','available') NOT NULL DEFAULT 'available'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -551,12 +543,12 @@ INSERT INTO `vouchers` (`voucher_id`, `code`, `category`, `status`) VALUES
 --
 
 CREATE TABLE `vouchers_test` (
-  `voucher_id` int NOT NULL,
-  `code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `category` int NOT NULL,
-  `duration` int NOT NULL COMMENT 'code duration (hours)',
-  `cap` int NOT NULL,
-  `status` enum('purchased','available') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'available'
+  `voucher_id` int(11) NOT NULL,
+  `code` varchar(100) NOT NULL,
+  `category` int(11) NOT NULL,
+  `duration` int(11) NOT NULL COMMENT 'code duration (hours)',
+  `cap` int(11) NOT NULL,
+  `status` enum('purchased','available') NOT NULL DEFAULT 'available'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -672,11 +664,11 @@ INSERT INTO `vouchers_test` (`voucher_id`, `code`, `category`, `duration`, `cap`
 --
 
 CREATE TABLE `voucher_category` (
-  `category` int NOT NULL,
-  `price` int NOT NULL,
-  `duration` int NOT NULL,
-  `voucher_description` text COLLATE utf8mb4_general_ci NOT NULL,
-  `stock` int DEFAULT NULL COMMENT 'just a placeholder, might want to add out of stock feature next time'
+  `category` int(11) NOT NULL,
+  `price` int(11) NOT NULL,
+  `duration` int(11) NOT NULL,
+  `voucher_description` text NOT NULL,
+  `stock` int(11) DEFAULT NULL COMMENT 'just a placeholder, might want to add out of stock feature next time'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -718,8 +710,7 @@ ALTER TABLE `users`
 -- Indexes for table `user_details`
 --
 ALTER TABLE `user_details`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `vouchers`
@@ -749,54 +740,47 @@ ALTER TABLE `voucher_category`
 -- AUTO_INCREMENT for table `purchased_voucher`
 --
 ALTER TABLE `purchased_voucher`
-  MODIFY `purchase_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `purchase_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `purchase_history`
 --
 ALTER TABLE `purchase_history`
-  MODIFY `purchase_history_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `purchase_history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `user_details`
+--
+ALTER TABLE `user_details`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `vouchers`
 --
 ALTER TABLE `vouchers`
-  MODIFY `voucher_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=932;
+  MODIFY `voucher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=932;
 
 --
 -- AUTO_INCREMENT for table `vouchers_test`
 --
 ALTER TABLE `vouchers_test`
-  MODIFY `voucher_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
+  MODIFY `voucher_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
 
 --
 -- AUTO_INCREMENT for table `voucher_category`
 --
 ALTER TABLE `voucher_category`
-  MODIFY `category` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `category` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `purchased_voucher`
---
-ALTER TABLE `purchased_voucher`
-  ADD CONSTRAINT `purchased_voucher_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `purchased_voucher_ibfk_2` FOREIGN KEY (`voucher_id`) REFERENCES `vouchers` (`voucher_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `purchase_history`
---
-ALTER TABLE `purchase_history`
-  ADD CONSTRAINT `purchase_history_ibfk_1` FOREIGN KEY (`purchased_id`) REFERENCES `purchased_voucher` (`purchase_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `users`
---
-ALTER TABLE `users`
-  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user_details` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `vouchers`
