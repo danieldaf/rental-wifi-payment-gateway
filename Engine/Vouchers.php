@@ -99,6 +99,27 @@ class Vouchers
         return "********";
     }
 
+    public function deleteCode($voucher_id)
+    {
+
+        $sql = "
+            DELETE FROM `purchase_history` 
+            WHERE `purchased_id` IN (
+                SELECT `purchase_id` 
+                FROM `purchased_voucher` 
+                WHERE `voucher_id` = :voucher_id 
+            );
+            DELETE FROM `purchased_voucher` 
+            WHERE `voucher_id` = :voucher_id;
+            DELETE FROM `vouchers` WHERE `voucher_id` = :voucher_id;
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(":voucher_id", $voucher_id);
+        if ($stmt->execute()){
+            echo "true";
+        }
+
+    }
 
 
 }

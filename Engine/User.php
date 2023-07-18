@@ -51,4 +51,43 @@ class User
 
     }
 
+    public function changePassword($oldpassword, $newpassword)
+    {
+        try {
+            $sql = "SELECT password FROM users WHERE user_id = :user_id";
+            $selectStmt = $this->db->prepare($sql);
+            $selectStmt->bindParam(":user_id", $this->loggedInUser);
+
+            if ($selectStmt->execute()) {
+                $row = $selectStmt->fetch(PDO::FETCH_ASSOC);
+                $password = $row['password'];
+
+                if (password_verify($oldpassword, $password)) {
+                    $updateSql = "UPDATE users SET password = :newpassword WHERE user_id = :user_id";
+                    $updateStmt = $this->db->prepare($updateSql);
+                    $password_hash = password_hash($newpassword, PASSWORD_DEFAULT);
+                    $updateStmt->bindParam(':newpassword', $password_hash);
+                    $updateStmt->bindParam(':user_id', $this->loggedInUser);
+
+                    if ($updateStmt->execute()) {
+                        return true;
+                    } else {
+                        throw new Exception("Failed to update the password");
+                    }
+                } else {
+                    throw new Exception("The old password is incorrect");
+                }
+            } else {
+                throw new Exception("Failed to fetch the stored password");
+            }
+        } catch (PDOException $e) {
+            echo "Database error: " . $e->getMessage();
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+
+        return false;
+    }
+
+
 }

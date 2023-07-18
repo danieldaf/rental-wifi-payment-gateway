@@ -12,10 +12,8 @@ const AUTHORIZATION_VALUE = 'Basic c2tfdGVzdF93aUNjMVNacEt3TG5KeXhGYkZaWkZtTHQ6'
 
 const APP_NAME = 'Rental WiFi';
 
-$protocol = !str_contains(strtolower($_SERVER['SERVER_PROTOCOL']), 'https') ? 'http' : 'https';
-$domainLink = $protocol . '://' . $_SERVER['HTTP_HOST'];
 
-define("BASE_URL", $domainLink);
+const BASE_URL = "http://localhost/payment-gateway";
 const SUCCESS_URL = BASE_URL . '/success.php';
 
 

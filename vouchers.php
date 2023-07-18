@@ -112,9 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <td> <?= $res['voucher_description'] ?></td>
                                 <td> <?= $res['status'] ?></td>
                                 <td>
-
                                     <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline-primary edit_code" data-id="<?= $res['voucher_id'] ?>"><i class="far fa-pencil"></i></button>
                                         <button class="btn btn-sm btn-outline-danger delete_code" data-id="<?= $res['voucher_id'] ?>"><i class="far fa-trash"></i></button>
                                     </div>
 
@@ -146,10 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
                 <form action="vouchers.php" method="post">
-
-
                     <div class="mb-3">
                         <label for="code_category">Code Category</label>
                         <select id="code_category" name="code_category" class="form-control" onchange="toggleCodeInputs()">
@@ -167,7 +162,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             ?>
                         </select>
                     </div>
-
                     <div class="mb-3">
                         <label for="code">Enter Code</label>
                         <div id="codeInputs">
@@ -175,14 +169,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
 
-
-
                     <div class="mb-3">
                         <button type="submit" name="saveCode" class="btn btn-success">Save</button>
                     </div>
-
                 </form>
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -192,33 +182,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script>
     const dataTable = new simpleDatatables.DataTable("#myTable");
-
-    // Fetch the journal data
-    $(document).on('click', '.edit', function (){
-
-        let journal_id = $(this).data('id');
-        let editModal = new bootstrap.Modal('#edit_modal')
-        $.ajax({
-            type: 'POST',
-            url: 'config/Ajax.php',
-            data: {
-                action: 'fetchJournalByIDCrud',
-                journal_id: journal_id
-            },
-            success: function (res) {
-
-                var data = JSON.parse(res)
-
-                editModal.show();
-
-            }
-        })
-
-    });
 
 
 
@@ -241,31 +210,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     }
 
-    $(document).on('click', '.delete', function () {
 
-        let journal_id = $(this).data('id');
-        let name = $(this).data('name');
 
-        var prompt = 'Are you sure you want to delete ' + name
+    $(document).on('click', '.delete_code', function () {
 
-        alertify.confirm('Are you sure?', prompt,
-            function(){
-                $.ajax({
-                    type: 'POST',
-                    url: 'config/Ajax.php',
-                    data: {
-                        action: 'deleteJournal',
-                        journal_id: journal_id
-                    }, success: function (res){
-                        if (res === "true"){
-                            notyf.success('Your changes have been successfully saved!');
-                            initJournalTable();
-                        } else {
-                            notyf.error(res)
-                        }
+        let code_id = $(this).data('id');
+
+        var prompt = 'Are you sure you want to delete?'
+
+        if(confirm(prompt)){
+            $.ajax({
+                type: 'POST',
+                url: 'config/Ajax.php',
+                data: {
+                    action: 'deleteCode',
+                    code_id: code_id
+                }, success: function (res){
+                    if (res === "true"){
+                        alert('Your changes have been successfully saved!');
+
+                        location.reload();
+                    } else {
+                        alert(res)
                     }
-                })
-            }, function(){ alertify.error('Cancel')});
+                }
+            })
+        }
+
+
     });
 </script>
 </body>

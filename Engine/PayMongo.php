@@ -249,22 +249,25 @@ class PayMongo
      */
     public function removeVoucherFromOtherCart($voucher_id){
 
+        $fingerprint = Generate::_generateLoginString();
+
 
             $sql = "
-            DELETE FROM purchase_history 
-            WHERE purchased_id IN (
-                SELECT purchase_id 
-                FROM purchased_voucher 
-                WHERE voucher_id = :voucher_id 
-                AND NOT user_id = :uid
+            DELETE FROM `purchase_history` 
+            WHERE `purchased_id` IN (
+                SELECT `purchase_id` 
+                FROM `purchased_voucher` 
+                WHERE `voucher_id` = :voucher_id 
+                AND NOT `user_id` = :uid AND NOT `fingerprint` = :fingerprint
             );
     
-            DELETE FROM purchased_voucher 
-            WHERE voucher_id = :voucher_id 
-            AND NOT user_id = :uid
+            DELETE FROM `purchased_voucher` 
+            WHERE `voucher_id` = :voucher_id 
+            AND NOT `user_id` = :uid
         ";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(":voucher_id", $voucher_id);
+        $stmt->bindParam(":fingerprint", $fingerprint);
         $stmt->bindParam(":uid", $this->loggedInUser);
         $stmt->execute();
     }

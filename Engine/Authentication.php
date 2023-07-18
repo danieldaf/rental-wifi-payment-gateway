@@ -93,10 +93,10 @@ class Authentication
                     $hashed_password = $row['password'];
 
 
-                    if (!$this->csrf->validateToken($csrf)) {
-                        echo "Login not valid";
-                        return;
-                    }
+//                    if (!$this->csrf->validateToken($csrf)) {
+//                        echo "Login not valid";
+//                        return;
+//                    }
 
                     if(password_verify($password, $hashed_password)){
 
@@ -136,7 +136,6 @@ class Authentication
      * @param string $username User's username
      * @param string $email Email of the user
      * @param string $password Password of the user
-     * @param string $confirm_password Retyped password of the user
      * @return bool|void
      */
     public function userRegister(string $username, string $email, string $password){
@@ -221,10 +220,12 @@ class Authentication
 
         $sql = "SELECT user_id FROM users WHERE username = :u";
         $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':u', $username, PDO::PARAM_STR);
+        $stmt->bindParam(':u', $username);
         if($stmt->execute()){
             if($stmt->rowCount() == 1){
                 return true;
+            } else {
+                return false;
             }
         }
     }
@@ -242,6 +243,8 @@ class Authentication
         if($stmt->execute()){
             if($stmt->rowCount() == 1){
                 return true;
+            } else {
+                return false;
             }
         }
     }
