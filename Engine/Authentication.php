@@ -139,12 +139,11 @@ class Authentication
      * @param string $confirm_password Retyped password of the user
      * @return bool|void
      */
-    public function userRegister(string $username, string $email, string $password, string $confirm_password){
+    public function userRegister(string $username, string $email, string $password){
 
         $username = trim($username);
         $email = trim($email);
         $password = trim($password);
-        $confirm_password = trim($confirm_password);
 
 
         if($this->checkUsername($username)){
@@ -157,15 +156,10 @@ class Authentication
             return;
         }
 
-        if ($password !== $confirm_password){
-            echo "Password doesnt match";
-            return;
-        }
-
 
         try {
 
-            $hashed_password = password_hash($confirm_password, PASSWORD_DEFAULT);
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
 
             $sql = "INSERT INTO `users` (`username`, `email`, `password`) VALUES (:username, :email, :password)";

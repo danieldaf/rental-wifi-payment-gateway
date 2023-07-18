@@ -19,7 +19,8 @@ if(isset($_POST['action'])){
             $login->loginAsGuest();
             break;
         case 'userRegister':
-
+            $register = new Authentication();
+            $register->userRegister($_POST['username'], $_POST['email'], $_POST['password']);
             break;
         case 'purchaseProcess':
             $purchase = new Purchase();

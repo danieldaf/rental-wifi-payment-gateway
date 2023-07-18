@@ -74,6 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <?php endif; ?>
 
+                    <h3>Manage Vouchers</h3>
+
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                         Add Code
                     </button>
@@ -128,6 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 </div>
             </div>
+            
+
 
         </div>
     </div>
@@ -224,11 +228,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (codeCategory.value === '3') {
             codeInputs.innerHTML = `
-                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 1">
-                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 2">
-                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 3">
-                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 4">
-                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 5">
+                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 1"><br>
+                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 2"><br>
+                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 3"><br>
+                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 4"><br>
+                <input type="number" name="code[]" class="form-control" placeholder="Enter Voucher Code 5"><br>
             `;
     } else {
         codeInputs.innerHTML = `

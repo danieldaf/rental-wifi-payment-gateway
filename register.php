@@ -29,22 +29,22 @@ if ($auth->isLoggedIn()){
                         <form id="loginform" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label class="mb-2 text-muted" for="username">Username</label>
-                                <input id="username" type="text" class="form-control" name="username" value=""  autofocus>
+                                <input id="username" type="text" class="form-control" name="username" value="" required autofocus>
                             </div>
 
                             <div class="mb-3">
                                 <label class="mb-2 text-muted" for="username">Email Address</label>
-                                <input id="email" type="text" class="form-control" name="email" value="" >
+                                <input id="email" type="text" class="form-control" name="email" value="" required>
                             </div>
 
                             <div class="mb-3">
                                     <label class="text-muted" for="password">Password</label>
-                                <input id="password" type="password" class="form-control" name="password" >
+                                <input id="password" type="password" class="form-control" name="password" required>
                             </div>
 
                             <div class="mb-3">
                                     <label class="text-muted" for="password">Repeat Password</label>
-                                <input id="repeat_password" type="password" class="form-control" name="password" >
+                                <input id="repeat_password" type="password" class="form-control" name="repeat_password" required>
                             </div>
 
                             <div class="d-flex align-items-center">
@@ -72,15 +72,19 @@ if ($auth->isLoggedIn()){
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script src="assets/js/sha512.js"></script>
 <script>
-    $(document).ready(function() {
 
-        });
         $("#loginform").on('submit', function(e) {
             e.preventDefault();
 
             var data = {
                 username: $("#username").val(),
-                password: $("#password").val()
+                password: $("#password").val(),
+                repeat_password: $("#repeat_password").val(),
+                email: $("#email").val()
+            }
+
+            if (data.password.trim() !== data.repeat_password.trim()) {
+                alert("Password does not match");
             }
 
             data.password = CryptoJS.SHA512(data.password).toString();
@@ -90,13 +94,14 @@ if ($auth->isLoggedIn()){
                 type: "POST",
                 url: "config/Ajax.php",
                 data: {
-                    action: 'userLogin',
+                    action: 'userRegister',
                     username: data.username,
-                    password: data.password
+                    password: data.password,
+                    email: data.email
                 },
                 success: function(response){
                     if(response === "true"){
-                        window.location.href = 'index.php';
+                        window.location.href = 'login.php';
                     } else {
                         alert(response)
                     }
@@ -105,7 +110,7 @@ if ($auth->isLoggedIn()){
             })
 
         })
-    });
+
 </script>
 </body>
 </html>

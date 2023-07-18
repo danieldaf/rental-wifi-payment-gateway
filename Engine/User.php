@@ -33,4 +33,22 @@ class User
 
     }
 
+    public function deleteAccount()
+    {
+
+        $sql = "DELETE user_details, purchase_history, purchased_voucher, users
+                    FROM users
+                    LEFT JOIN user_details ON user_details.user_id = users.user_id
+                    LEFT JOIN purchased_voucher ON purchased_voucher.user_id = users.user_id
+                    LEFT JOIN purchase_history ON purchase_history.purchased_id = purchased_voucher.purchase_id
+                    WHERE users.user_id = :uid;
+                    ";
+        $stmt = $this->db->query($sql);
+        if ($stmt->execute()) {
+            Session::destroySession();
+            header("Location: login.php?delete=true");
+        }
+
+    }
+
 }

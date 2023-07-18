@@ -2,7 +2,7 @@
 const DB_HOST = 'localhost';
 const DB_NAME = 'payment_gateway';
 const DB_USER = 'root';
-const DB_PASS = '@Cyanne01';
+const DB_PASS = '';
 const AUTHORIZATION_VALUE = 'Basic c2tfdGVzdF93aUNjMVNacEt3TG5KeXhGYkZaWkZtTHQ6';
 
 
