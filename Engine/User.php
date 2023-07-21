@@ -17,6 +17,10 @@ class User
         $this->loggedInUser = Session::getSession('user_id');
     }
 
+    /**
+     * Get the loggedin user data
+     * @return false|mixed|void
+     */
     public function getUserData()
     {
 
@@ -33,24 +37,54 @@ class User
 
     }
 
-    public function deleteAccount()
+    /**
+     * Deletes a user from the database
+     * @param string $password
+     * @return void
+     */
+    public function deleteAccount(string $verify)
     {
 
-        $sql = "DELETE user_details, purchase_history, purchased_voucher, users
+            $sql = "SELECT password FROM users WHERE user_id = :user_id";
+            $selectStmt = $this->db->prepare($sql);
+            $selectStmt->bindParam(":user_id", $this->loggedInUser);
+
+            if ($selectStmt->execute()) {
+                $row = $selectStmt->fetch(PDO::FETCH_ASSOC);
+                $password = $row['password'];
+
+                if (password_verify($verify, $password)) {
+
+                    $sql = "DELETE user_details, purchase_history, purchased_voucher, users
                     FROM users
                     LEFT JOIN user_details ON user_details.user_id = users.user_id
                     LEFT JOIN purchased_voucher ON purchased_voucher.user_id = users.user_id
                     LEFT JOIN purchase_history ON purchase_history.purchased_id = purchased_voucher.purchase_id
                     WHERE users.user_id = :uid;
                     ";
-        $stmt = $this->db->query($sql);
-        if ($stmt->execute()) {
-            Session::destroySession();
-            header("Location: login.php?delete=true");
-        }
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->bindParam(":uid", $this->loggedInUser);
+                    if ($stmt->execute()) {
+                        Session::destroySession();
+                        echo "true";
+                    }
+                } else {
+                    echo "Password is incorrect";
+                }
+            }
+
+
+
+
 
     }
 
+    /**
+     * Change the user password
+     * @param $oldpassword
+     * @param $newpassword
+     * @return bool
+     */
     public function changePassword($oldpassword, $newpassword)
     {
         try {

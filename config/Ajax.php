@@ -52,7 +52,10 @@ if(isset($_POST['action'])){
 
             $user = new User();
             $user->changePassword($_POST['oldpassword'], $_POST['newpassword']);
-
+            break;
+        case 'deleteAccount':
+            $auth = new User();
+            $auth->deleteAccount($_POST['password']);
             break;
         default:
             echo "Invalid action";

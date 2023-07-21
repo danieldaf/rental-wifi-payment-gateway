@@ -27,7 +27,7 @@ class PayMongo
         $this->loggedInUser = Session::getSession('user_id');
     }
 
-    public function makeCheckout($price_amount, $quantity, $voucher_name, $voucher)
+    public function makeCheckout($price_amount, $quantity, $voucher_name, $voucher): void
     {
         $userdata = $this->user->getUserData();
         $full_name = "Guest";
@@ -128,7 +128,7 @@ class PayMongo
             'headers' => [
                 'Content-Type' => 'application/json',
                 'accept' => 'application/json',
-                'authorization' => AUTHORIZATION_VALUE,
+                'authorization' => 'Basic ' . AUTHORIZATION_VALUE,
             ],
         ]);
 
@@ -152,7 +152,7 @@ class PayMongo
         $response = $this->client->request('GET', $uri, [
             'headers' => [
                 'accept' => 'application/json',
-                'authorization' => AUTHORIZATION_VALUE,
+                'authorization' => 'Basic ' . AUTHORIZATION_VALUE,
             ],
         ]);
 
@@ -173,7 +173,7 @@ class PayMongo
         $response = $this->client->request('POST', $uri . '/expire', [
             'headers' => [
                 'accept' => 'application/json',
-                'authorization' => AUTHORIZATION_VALUE
+                'authorization' => 'Basic ' . AUTHORIZATION_VALUE,
             ],
         ]);
 

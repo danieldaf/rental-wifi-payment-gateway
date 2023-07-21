@@ -1,9 +1,15 @@
 <?php
 
+/**
+ * Admin Class
+ */
 class Admin
 {
 
 
+    /**
+     * @var Database
+     */
     private Database $db;
     private Authentication $auth;
 
@@ -13,6 +19,10 @@ class Admin
         $this->auth = new Authentication();
     }
 
+    /**
+     * Fetch all the vouchers
+     * @return array|false|void
+     */
     public function fetchAllVouchers()
     {
 
@@ -28,6 +38,9 @@ class Admin
 
     }
 
+    /**
+     * @return array|false|void
+     */
     public function fetchAllCategory()
     {
         $sql = "SELECT * FROM voucher_category";

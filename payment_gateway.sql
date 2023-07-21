@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 18, 2023 at 04:16 PM
+-- Generation Time: Jul 21, 2023 at 01:59 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -73,7 +73,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `role`, `date_created`) VALUES
 (-1, 'guest', '', '', 'user', '2023-07-16 08:08:05'),
 (2, 'cyanneheart', 'cyannejustinl.vega12@gmail.com', '$2y$10$1JqJpV.WjYgEYOfPACtzvu.DJldDhGeTrvolKTY6BB202tHCUl52u', 'user', '2023-07-12 15:48:53'),
-(3, 'admin', 'admin@admin.com', '$2y$10$faLpAGqlelECVJ9gt9dVb.G6QTuNCl9nrngCAQz3j0HBowM31j/p6', 'admin', '2023-07-17 20:11:29');
+(3, 'admin', 'admin@admin.com', '$2y$10$faLpAGqlelECVJ9gt9dVb.G6QTuNCl9nrngCAQz3j0HBowM31j/p6', 'admin', '2023-07-17 20:11:29'),
+(6, 'test', 'test@gmail.com', '$2y$10$b.xBWuoMufctHeBjjfWDLOz2c3ItCEqJ0g4v2KZQbGJoji/nHEBRy', 'user', '2023-07-18 22:53:59'),
+(7, 'test1', 'testemail@email.com', '$2y$10$1BuoIFTXYGUkrLvEY10RF.GcDwNxDS9rJulGIyQyyTau1IXkhO3t6', 'user', '2023-07-19 09:59:00');
 
 -- --------------------------------------------------------
 
@@ -95,7 +97,9 @@ CREATE TABLE `user_details` (
 INSERT INTO `user_details` (`id`, `user_id`, `first_name`, `last_name`) VALUES
 (1, -1, NULL, NULL),
 (3, 2, NULL, NULL),
-(4, 3, NULL, NULL);
+(4, 3, NULL, NULL),
+(7, 6, NULL, NULL),
+(8, 7, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -604,13 +608,13 @@ ALTER TABLE `purchase_history`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `user_details`
 --
 ALTER TABLE `user_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `vouchers`

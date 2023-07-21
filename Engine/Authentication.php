@@ -53,6 +53,10 @@ class Authentication
     }
 
 
+    /**
+     * Log in as a guest, set session
+     * @return void
+     */
     public function loginAsGuest() {
 
         /** Log in the user */
@@ -171,7 +175,7 @@ class Authentication
                 $uid = $this->db->lastInsertId();
                 if ($this->setUserData($uid)){
                     return true;
-
+                    echo "true";
                 }
 
             }

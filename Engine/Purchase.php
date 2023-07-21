@@ -30,37 +30,26 @@ class Purchase
 
     }
 
-
     /**
      * Make a purchase request
      * @param $pricing
      * @return void
      * @throws GuzzleException
      */
-    public function makePurchase($pricing){
-
-        switch ($pricing) {
-            case 'starter': 
-               $voucher = $this->voucher->fetchVoucher(1);
-               $this->paymongo->makeCheckout($voucher['price'], 1, "Starter", $voucher['voucher_id']);
-
-                break;
-            case 'basic':
-                $voucher = $this->voucher->fetchVoucher(2);
-                $this->paymongo->makeCheckout($voucher['price'], 1, "Basic", $voucher['voucher_id']);
-                break;
-            case '5dayplan':
-                $voucher = $this->voucher->fetchVoucher(3);
-                 $this->paymongo->makeCheckout($voucher['price'], 5, "5 Day Plan", $voucher['voucher_id']);
-
-                break;
-            case 'pro':
-                $voucher = $this->voucher->fetchVoucher(4);
-                $this->paymongo->makeCheckout($voucher['price'], 1, "Pro", $voucher['voucher_id']);
-                break;
-            default:
-                echo 'Invalid request';
-                break;
+    public function makePurchase($pricing)
+    {
+        $pricingDetails = [
+            'starter' => ['voucher_id' => 1, 'duration' => 1, 'name' => 'Starter'],
+            'basic' => ['voucher_id' => 2, 'duration' => 1, 'name' => 'Basic'],
+            '5dayplan' => ['voucher_id' => 3, 'duration' => 5, 'name' => '5 Day Plan'],
+            'pro' => ['voucher_id' => 4, 'duration' => 1, 'name' => 'Pro']
+        ];
+        if (array_key_exists($pricing, $pricingDetails)) {
+            $details = $pricingDetails[$pricing];
+            $voucher = $this->voucher->fetchVoucher($details['voucher_id']);
+            $this->paymongo->makeCheckout($voucher['price'], $details['duration'], $details['name'], $voucher['voucher_id']);
+        } else {
+            echo 'Invalid request';
         }
     }
 
