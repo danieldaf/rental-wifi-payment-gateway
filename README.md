@@ -18,7 +18,7 @@ The Rental WiFi Portal is a payment gateway portal that integrates PayMongo API.
 
 ## Installation
 
-- Copy or move the phpLoginRegisterSystem folder to your hosting directory
+- Copy or move the system folder to your hosting directory
 - Import the database file
 - Change the values on the Configuration file.
   ```config/Configuration.php```
