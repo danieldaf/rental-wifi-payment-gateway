@@ -1,7 +1,7 @@
 ﻿
 # Rental Wifi Portal
 
-The Rental WiFi Portal is a payment gateway portal that integrates PayMongo API. This portal allows users to make payments for renting WiFi devices or services using the PayMongo payment gateway.
+The Rental WiFi Portal is a payment gateway portal for TP-Link EAP-245 that integrates PayMongo API. This portal allows users to make payments for renting WiFi devices or services using the PayMongo payment gateway.
 ## Features
 
 - Payment Integration
