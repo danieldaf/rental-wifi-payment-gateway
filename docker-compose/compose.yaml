@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mysql:8.0
+    container_name: mariadb
+    restart: none
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=payment_gateway
+      - MYSQL_USER=payment
+      - MYSQL_PASSWORD=pay123
+    volumes:
+      - ../.docker/db-data:/var/lib/mysql
+      #- ./my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - '13306:3306'
+    expose:                                               
+      - '13306'                                                                                                                              
+    networks:
+      - payment-network
+
+  php:
+    #image: php:8.2-fpm
+    build: ./php
+    container_name: php
+    restart: none
+    environment:                                                                                                                            
+      - PHP_VERSION=8.2
+      - PHP_ROOT=/var/www/html
+      #- APACHE_MODULES="mod_php8"
+      - PECL_EXTENSIONS="pdo"
+      - MYSQL_HOST=mariadb
+      - MYSQL_PORT=3306
+      - MYSQL_USER=payment
+      - MYSQL_PASSWORD=pay123
+    volumes:
+      - ./php.ini:/usr/local/etc/php/php.ini
+      - ../:/var/www/html
+      #- /var/run/php/php8.2-fpm.sock:/var/run/php/php8.2-fpm.sock
+    networks:
+      - payment-network
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: none
+    depends_on:
+      - php
+      - mariadb
+    volumes:
+      #- ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../:/var/www/html
+    ports:
+      - '8080:80'
+    expose:
+      - '8080'
+    networks:
+      - payment-network
+
+networks:
+  payment-network:
+    driver: bridge

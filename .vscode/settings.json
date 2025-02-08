@@ -1,0 +1,21 @@
+{
+    "dbcode.connections": [
+        {
+            "connectionId": "2AI_Uk_EwCOYkr23-FkcJ",
+            "name": "payment",
+            "driver": "mariadb",
+            "connectionType": "host",
+            "host": "localhost",
+            "port": 13306,
+            "ssl": false,
+            "username": "payment",
+            "password": "",
+            "savePassword": "secretStorage",
+            "database": "payment_gateway",
+            "connectionTimeout": 30,
+            "driverOptions": {
+                "retrievePublickey": true
+            }
+        }
+    ]
+}

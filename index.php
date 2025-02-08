@@ -1,4 +1,5 @@
 <?php
+    // phpinfo();
 
     include_once 'config/init.php';
     $voucher = new Vouchers();

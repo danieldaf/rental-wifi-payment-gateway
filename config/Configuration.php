@@ -15,12 +15,16 @@ if (PRODUCTION) {
     define("AUTHORIZATION_VALUE", ''); // Base64 encoded API key
     define("BASE_URL", "https://www.example.com/payment-gateway");
 } else {
-    define("DB_HOST", 'localhost');
+    // define("DB_HOST", 'localhost');
+    define("DB_HOST", 'mariadb');
     define("DB_NAME", 'payment_gateway');
-    define("DB_USER", 'root');
-    define("DB_PASS", '');
+    // define("DB_USER", 'root');
+    // define("DB_PASS", '');
+    define("DB_USER", 'payment');
+    define("DB_PASS", 'pay123');
     define("AUTHORIZATION_VALUE", 'c2tfdGVzdF93aUNjMVNacEt3TG5KeXhGYkZaWkZtTHQ6'); // Base64 encoded API key
-    define("BASE_URL", "http://localhost/payment-gateway");
+    // define("BASE_URL", "http://localhost/payment-gateway");
+    define("BASE_URL", "http://localhost:8080/");
 }
 
 const SUCCESS_URL = BASE_URL . '/success.php';
